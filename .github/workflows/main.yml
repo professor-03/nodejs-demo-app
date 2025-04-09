@@ -1,0 +1,39 @@
+name: CI/CD for a Simple Calculator App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: set up node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  dockerize:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Build Docker image
+        run: docker build -t professor2004/cliffenator/calculator-app:latest .
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.D2004@g93 }}" | docker login -u "${{ secrets.professor2004 }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker push professor2004/cliffenator/calculator-app:latest
